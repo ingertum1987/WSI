@@ -1,0 +1,11 @@
+cabinet_user_balance:
+    resource: 'user/balance.yaml'
+    prefix: /balance
+
+cabinet_user_profile:
+    resource: 'user/profile.yaml'
+    prefix: /profile
+
+cabinet_user_document:
+    resource: App\Controller\Cabinet\User\DocumentController
+    prefix: /document

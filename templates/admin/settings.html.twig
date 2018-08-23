@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+{% block title %}Настройки системы{% endblock %}
+{% block body %}
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Настройки системы</h4>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="row">
+        {#<div class="col-lg-6">
+            <div class="row">
+                <!-- column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">NEW CLIENTS</h5>
+                            <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                                <span class="display-5 text-info"><i class="icon-people"></i></span>
+                                <a href="javscript:void(0)" class="link display-5 ml-auto">23</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">NEW PROJECTS</h5>
+                            <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                                <span class="display-5 text-purple"><i class="icon-folder"></i></span>
+                                <a href="javscript:void(0)" class="link display-5 ml-auto">169</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">OPEN PROJECTS</h5>
+                            <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                                <span class="display-5 text-primary"><i class="icon-folder-alt"></i></span>
+                                <a href="javscript:void(0)" class="link display-5 ml-auto">311</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- column -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">NEW INVOICES</h5>
+                            <div class="d-flex m-t-30 m-b-20 no-block align-items-center">
+                                <span class="display-5 text-success"><i class="icon-wallet"></i></span>
+                                <a href="javscript:void(0)" class="link display-5 ml-auto">117</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- column -->
+            </div>
+        </div>#}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="card-title">Основные настройки системы</h4>
+                        </div>
+                        <div class="col text-right">
+                            {#<form method="post">#}
+                                {#<button type="submit" name="calculateProfit"#}
+                                        {#class="btn waves-effect waves-light btn-rounded btn-info">Провести расчет</button>#}
+                            {#</form>#}
+                        </div>
+                    </div>
+                    <!-- Nav tabs -->
+                    <div class="vtabs customvtab">
+                        <ul class="nav nav-tabs tabs-vertical" role="tablist">
+                            {#<li class="nav-item">#}
+                                {#<a class="nav-link active" data-toggle="tab" href="#home3" role="tab">#}
+                                    {#<span class="hidden-sm-up"><i class="ti-home"></i></span>#}
+                                    {#<span class="hidden-xs-down">Итоги периода</span> </a>#}
+                            {#</li>#}
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#profile3" role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                    <span class="hidden-xs-down">Доходность</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#adminMail" role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-email"></i></span>
+                                    <span class="hidden-xs-down">Почта</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#import" role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-import"></i></span>
+                                    <span class="hidden-xs-down">Импорт</span></a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {#<div class="tab-pane active" id="home3" role="tabpanel">#}
+                                {#<div class="p-20">#}
+                                    {#<h3>Настройка доходности фонда WSI:</h3>#}
+                                    {#<p>Внимание! Данная настройка действует для всех пользователей в системе.</p>#}
+                                    {#<p>Дата последнего расчета: {% if thisMonthTransaction.createdAt is defined %} {{ thisMonthTransaction.createdAt| date('d.m.Y') }} {% endif %}</p>#}
+                                    {#<form method="post" class="m-t-40">#}
+                                        {#<div class="form-group row">#}
+                                            {#<label for="sum">Итог месяца</label>#}
+                                            {#<input class="form-control" id="sum"#}
+                                                   {#value="{% if profit.sum is defined %}{{ profit.sum }}{% endif %}"#}
+                                                   {#placeholder="введите сумму"#}
+                                                   {#type="text" name="sum">#}
+                                        {#</div>#}
+                                        {#<div class="form-group row">#}
+                                            {#<label for="password">Пароль администратора</label>#}
+                                            {#<input class="form-control" id="password"#}
+                                                   {#placeholder="введите пароль администратора"#}
+                                                   {#type="password" name="password">#}
+                                        {#</div>#}
+                                        {#<div class="form-group m-b-0 text-right">#}
+                                            {#<div class="offset-sm-3 col-sm-9">#}
+                                                {#<button type="submit"#}
+                                                        {#name="setProfit"#}
+                                                        {#class="btn waves-effect waves-light btn-rounded btn-outline-info m-t-10">Принять</button>#}
+                                            {#</div>#}
+                                        {#</div>#}
+                                    {#</form>#}
+                                {#</div>#}
+                            {#</div>#}
+                            <div class="tab-pane active p-20" id="profile3" role="tabpanel">
+                                <h4>Укажите % от доходности фонда за прошлый месяц</h4>
+                                <form method="post">
+                                    <div class="form-group row">
+                                        <input class="form-control" id="return_rate"
+                                               value="{% if returnRate.value is defined %}{{ returnRate.value }}{% endif %}"
+                                               placeholder="Доходность"
+                                               type="" name="return_rate">
+                                    </div>
+                                    <div class="form-group m-b-0">
+                                        <div class="offset-sm-3 col-sm-9">
+                                            <button type="submit"
+                                                    name="changeReturnRate"
+                                                    class="btn btn-info waves-effect waves-light m-t-10">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="tab-pane p-20" id="adminMail" role="tabpanel">
+                                <div class="p-20">
+                                    <h3>Настройка системной почты.</h3>
+                                    <form method="post">
+                                        <div class="form-group row">
+                                            <input class="form-control" id="email"
+                                                   value="{% if adminEmail.value is defined %}{{ adminEmail.value }}{% endif %}"
+                                                   placeholder="email"
+                                                   type="email" name="email">
+                                        </div>
+                                        <div class="form-group m-b-0">
+                                            <div class="offset-sm-3 col-sm-9">
+                                                <button type="submit"
+                                                        name="changeAdminEmail"
+                                                        class="btn btn-info waves-effect waves-light m-t-10">Принять</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="tab-pane p-20" id="import" role="tabpanel">
+                                <div class="p-20">
+                                    <h3>Импортировать из CSV</h3>
+                                    {{ form_start(importForm, {'action': path('user_admin_import_preview')}) }}
+                                    <div class="form-group">
+                                        {{ form_label(importForm.date) }}
+                                        {{ form_widget(importForm.date, { 'attr': {'class': "form-control"}}) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(importForm.file) }}
+                                        {{ form_widget(importForm.file, { 'attr': {'class': "form-control"}}) }}
+                                    </div>
+                                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Загрузить</button>
+                                    {{ form_end(importForm) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        $('#upload_csv_date').datepicker({
+            format: "dd.mm.yyyy",
+            language: "ru",
+            autoclose: true,
+            orientation: 'bottom'
+        });
+    </script>
+{% endblock %}

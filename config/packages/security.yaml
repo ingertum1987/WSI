@@ -1,0 +1,48 @@
+security:
+    encoders:
+        App\Entity\User: bcrypt
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        in_memory: { memory: ~ }
+        user_db_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        admin_secured_area:
+            anonymous: ~
+            pattern:    ^/admin
+            form_login:
+                login_path: /admin/login
+                check_path: /admin/login
+                default_target_path: /admin/transactions
+            logout:
+                path: /admin/logout
+                target: /admin/login
+            provider: user_db_provider
+
+        user_secured_area:
+            anonymous: ~
+            pattern:   ^/
+            provider: user_db_provider
+            form_login:
+                login_path: /login
+                check_path: /login
+                default_target_path:    /user
+            logout:
+                path: /logout
+                target: /login
+
+    access_control:
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/recover, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
+        - { path: ^/user/, roles:  [ROLE_ADMIN, ROLE_USER]  }
+        - { path: ^/, roles:  [ROLE_USER]}

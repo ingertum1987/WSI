@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Операция по личному счету пользователя</title>
+</head>
+<body>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Операция по личному счету пользователя проведена успешно.</h1>
+    <ul>
+        <li>Инвестор:</li>
+        <li>Имя: {{ investor.name }}</li>
+        <li>Фамилия: {{ investor.surname }}</li>
+        <li>Телефон: {{ investor.username }}</li>
+        {% if direction == 'in' %}
+            <li>С кошелька: {{ investor.bitcoinWallet }}</li>
+            <li>На счет: {{ account.name }}</li>
+        {% else %}
+            <li>Со счета: {{ account.name }}</li>
+            <li>На кошелек: {{ investor.bitcoinWallet }}</li>
+        {% endif %}
+        <li>Начислено/Списано: {{ sum }}</li>
+        <li>Сумма на личном счету пользователя: {{ balance }}</li>
+        <li>Ответственный администратор:</li>
+        <li>ID: {{ adminInfo.id }}</li>
+        <li>Имя: {{ adminInfo.name }}</li>
+        <li>Фамилия: {{ adminInfo.surname }}</li>
+    </ul>
+</div>
+</body>
+</html>

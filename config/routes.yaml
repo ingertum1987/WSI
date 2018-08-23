@@ -1,0 +1,43 @@
+login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+
+recover_password:
+    path: /recover/{phone}
+    controller: App\Controller\SecurityController::recoverPassword
+
+logout:
+    path: /logout
+
+register:
+    path: /register
+    controller: App\Controller\SecurityController::register
+
+index:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults:
+        path: /cabinet/user/profile
+        permanent: true
+
+admin:
+    resource: '../src/Resources/config/adminRouting.yml'
+    prefix: /admin
+
+user:
+    resource: '../src/Resources/config/userRouting.yml'
+    prefix: /user
+
+chat:
+    resource: App\Controller\ChatController
+    prefix: /chat
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.yaml"
+
+cabinet:
+    resource: 'routes/cabinet.yaml'
+    prefix: /cabinet

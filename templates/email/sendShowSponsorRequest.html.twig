@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Заявка на разрешение просмотра данных</title>
+</head>
+<body>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .button-sponsor-request{
+        padding: 20px;
+        color: white;
+        border-radius: 50px;
+    }
+    .button-sponsor-request-green {
+        background-color: #00c292;
+    }
+    .button-sponsor-request-red {
+        background-color: #e46a76;
+    }
+    .sponsor-request-link{
+        text-decoration: none;
+    }
+</style>
+
+<div class="example-wrapper">
+    <p>
+        Ваш спонсор <b>{{ sponsor.name }} {{ sponsor.surname }}</b> запрашивает данные о вашем (Доходе / Реферальном доходе)
+        Чтобы разрешить ему увидеть эти данные или отклонить нажмите на соответствующую ссылку:
+    </p>
+    <p style="margin: 50px 0; text-align: center">
+        <a href="{{ url('user_switchShowSponsor', {'active':1, 'hash':hash}) }}" class="sponsor-request-link">
+            <span class="button-sponsor-request button-sponsor-request-green">Одобрить</span>
+        </a>
+        <a href="{{ url('user_switchShowSponsor', {'active':0, 'hash':hash}) }}" class="sponsor-request-link">
+            <span class="button-sponsor-request button-sponsor-request-red">Отказать</span>
+        </a>
+    </p>
+    <p>
+        Так же, вы можете разрешить вашему спонсору увидеть эти данные, сделав активной галочку в пункте под названием
+        "Информация о доходе видна спонсору" в разделе "Профиль" в настройках Личного кабинета.
+    </p>
+    <p>
+        С уважением, команда WSI.
+    </p>
+</div>
+</body>
+</html>

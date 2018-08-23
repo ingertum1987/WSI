@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon2.png">
+    <title>WSI</title>
+
+    <!-- Custom CSS -->
+    <link href="{{ asset('/build/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/build/login.css') }}" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<!-- ============================================================== -->
+<!-- Preloader - style you can find in spinners.css -->
+<!-- ============================================================== -->
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">Загрузка</p>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<section id="wrapper" class="login-register login-sidebar"
+         style="background-image:url({{ asset('build/images/login-register.jpg') }});">
+    <div class="login-box card">
+        <div class="card-body">
+            {{ form_start(form) }}
+
+                <a href="javascript:void(0)" class="text-center db">
+                    <img src="{{ asset('build/images/logo-icon.png') }}" alt="Home" />
+                    <br/><img src="{{ asset('build/images/logo-text.png') }}" alt="Home" />
+                </a>
+                <h3 class="box-title m-t-40 m-b-0">Зарегистрироваться сейчас</h3>
+                <small>Создайте аккаунт</small>
+                <div class="form-group row m-t-20">
+                    <div class="col-5">
+                        <select name="country" id="" class="form-control">
+                            {% for country in countries %}
+                                <option
+                                        value="{{ country.phoneCode }}"
+                                        {% if country.name == 'Россия' %} selected="selected" {%  endif %}>
+                                    {{ country.name }}({{ country.phoneCode }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-7">
+                        {{ form_widget(form.username) }}
+                    </div>
+                </div>
+                <div class="form-group m-t-20">
+                    <div class="col-xs-12">
+                        {{ form_widget(form.promoCode) }}
+                    </div>
+                </div>
+            {% for message in app.flashes('error') %}
+                <div class="text-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+                <div class="form-group text-center m-t-20">
+                    <div class="col-xs-12">
+                        <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light"
+                                type="submit" name="register">Получить пароль</button>
+                    </div>
+                </div>
+
+                <div class="form-group m-b-0">
+                    <div class="col-sm-12 text-center">
+                        <p>Уже есть аккаунт?
+                            <a href="{{ path('login') }}" class="text-info m-l-5"><b>Войти</b></a>
+                        </p>
+                    </div>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+</section>
+<!-- ============================================================== -->
+<!-- End Wrapper -->
+<!-- ============================================================== -->
+<div class="modal fade" id="emptyInviteModal" tabindex="-1" role="dialog" aria-labelledby="emptyInviteModalHeader">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="emptyInviteModalHeader">New message</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Recipient:</label>
+                        <input type="text" class="form-control" id="recipient-name1">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">Message:</label>
+                        <textarea class="form-control" id="message-text1"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Send message</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- All Jquery -->
+<!-- ============================================================== -->
+<script src="{{ asset('build/app.js') }}"></script>
+<script type="text/javascript">
+    $(function() {
+        $(".preloader").fadeOut();
+    });
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+    // ==============================================================
+    // Login and Recover Password
+    // ==============================================================
+    $('#to-recover').on("click", function() {
+        $("#loginform").slideUp();
+        $("#recoverform").fadeIn();
+    });
+    // jQuery('button[name="register"]').on('click', function (e) {
+    //     e.preventDefault();
+    //     var invite = jQuery('#form_promoCode').val();
+    //
+    //     if (invite.length != 0){
+    //         console.log(22);
+    //     } else {
+    //         console.log(12);
+    //         jQuery('#emptyInviteModal').modal('show');
+    //     }
+    // });
+</script>
+</body>
+
+</html>

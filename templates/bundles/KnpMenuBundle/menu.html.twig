@@ -1,0 +1,11 @@
+{% extends '@!KnpMenu/menu.html.twig' %}
+
+{% block linkElement %}
+    {% import 'knp_menu.html.twig' as knp_menu %}
+    <a href="{{ item.uri }}"{{ knp_menu.attributes(item.linkAttributes) }}>
+        {% if item.linkAttributes['data-icon'] is defined %}
+            <i class="{{ item.linkAttributes['data-icon'] }}"></i>
+        {% endif %}
+        {{ block('label') }}
+    </a>
+{% endblock %}

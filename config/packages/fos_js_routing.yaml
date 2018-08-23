@@ -1,0 +1,5 @@
+fos_js_routing:
+    routes_to_expose:
+        - recover_password
+        - login
+        - cabinet_user_profile_foto_remove

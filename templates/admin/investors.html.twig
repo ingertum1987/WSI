@@ -1,0 +1,773 @@
+{% extends 'base.html.twig' %}
+{% block title %}Инвесторы{% endblock %}
+{% block body %}
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Инвесторы</h4>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="card">
+        <div class="row card-body">
+            <div class="col-12 text-right font20">
+                <a href="#" class="btn btn-info"
+                   data-toggle="modal"
+                   data-target="#investorPercent-modal">% дохода</a>
+                <a href="#" class="btn btn-info"
+                   data-toggle="modal"
+                   data-target="#changeSponsor-modal">Смена спонсора</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ввести / Вывести
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item inBalanceButton" href="#"
+                           data-toggle="modal"
+                           data-target="#inOutBalance-modal">Ввод средств</a>
+                        <a class="dropdown-item outBalanceButton" href="#"
+                           data-toggle="modal"
+                           data-target="#inOutBalance-modal">Вывод средств</a>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Добавить транзакцию
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item persToInvest" href="#"
+                           data-toggle="modal"
+                           data-target="#transfer-modal">С Личного на Инвестиционный</a>
+                        <a class="dropdown-item investToPers" href="#"
+                           data-toggle="modal"
+                           data-target="#transfer-modal">C Инвестиционного на Личный</a>
+                        <a class="dropdown-item referalToPers" href="#"
+                           data-toggle="modal"
+                           data-target="#transfer-modal">C Реферального на Личный</a>
+                        <a class="dropdown-item referalToInvest" href="#"
+                           data-toggle="modal"
+                           data-target="#transfer-modal">C Реферального на Инвестиционный</a>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Начисление
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item investAdd" href="#"
+                           data-toggle="modal"
+                           data-target="#referalIncome-modal">Начисление доходности</a>
+                        <a class="dropdown-item referalAdd" href="#"
+                           data-toggle="modal"
+                           data-target="#referalIncome-modal">Реферальное начисление</a>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="button"
+                            class="btn waves-effect waves-light btn-rounded btn-success"
+                            data-toggle="modal"
+                            data-target="#newUser-modal">Добавить инвестора</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Column -->
+        <div class="col-12">
+            <div class="card" style="overflow: auto;">
+                <div class="card-body">
+                    <table class="table m-t-30 table-hover no-wrap contact-list investorsTable footable"
+                           data-page-size="
+                           {% if app.request.get('option') is not empty %}
+                                5000
+                           {% else %}
+                                50
+                           {% endif %}">
+                        <thead>
+                            <form>
+                                <tr>
+                                    <th colspan="10" class="text-right">
+                                        <button type="submit" class="btn btn-outline-info btn-rounded"><i class="fa fa-check"></i> Фильтр</button>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <input class="form-control" placeholder="ID инвестора" name="id" type="text">
+                                    </th>
+                                    <th>
+                                        <input class="form-control" placeholder="Имя" name="name" type="text">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" name="surname" placeholder="Фамилия">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" name="username" placeholder="Телефон">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" name="parent" placeholder="Спонсор">
+                                    </th>
+                                    <th>
+                                        <input type="number" class="form-control" name="personal" placeholder="100">
+                                    </th>
+                                    <th>
+                                        <input type="number" class="form-control" name="invest" placeholder="100">
+                                    </th>
+                                    <th>
+                                        <input type="number" class="form-control" name="referal" placeholder="100">
+                                    </th>
+                                    <th>
+                                        <input type="number" step="0.01" class="form-control" name="percent" placeholder="10.00">
+                                    </th>
+                                    <th>
+                                        <input class="form-control" placeholder="100" name="profit" type="number" step="0.01">
+                                    </th>
+                                </tr>
+                            </form>
+                            <tr>
+                                <th class="{% if pagination.isSorted('u.id') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'ID', 'u.id') }}
+                                </th>
+                                <th class="{% if pagination.isSorted('u.name') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'Имя', 'u.name') }}
+                                </th>
+                                <th class="{% if pagination.isSorted('u.surname') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'Фамилия', 'u.surname') }}
+                                </th>
+                                <th class="{% if pagination.isSorted('u.username') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'Телефон', 'u.username') }}
+                                </th>
+                                <th class="{% if pagination.isSorted('p.id') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'Спонсор', 'p.id') }}
+                                </th>
+                                <th>Личный ($)</th>
+                                <th>Инвестиционный ($)</th>
+                                <th>Реферальный ($)</th>
+                                <th class="{% if pagination.isSorted('u.profitRate') %}sorted{% endif %}">
+                                    {{ knp_pagination_sortable(pagination, 'Процент', 'u.profitRate') }}
+                                </th>
+                                <th>Доход ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for investor in pagination %}
+                            <tr>
+                                <td>{{ investor.id }}</td>
+                                <td>{{ investor.name }}</td>
+                                <td>{{ investor.surname }}</td>
+                                <td>{{ investor.username }}</td>
+                                <td>{% if investor.parent is not empty %}{{ investor.parent.username }}{% endif %}</td>
+                                <td>{{ investor.balance['personal']|round(2, 'floor') }}</td>
+                                <td>{{ investor.balance['invest']|round(2, 'floor') }}</td>
+                                <td>{{ investor.balance['referral']|round(2, 'floor') }}</td>
+                                <td>{{ investor.profitRate }}</td>
+                                <td>{{ investor.balance['profit']|round(2, 'floor') }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <div class="text-right">
+                                        {{ knp_pagination_render(pagination) }}
+                                    </div>
+                                </td>
+                                <td colspan="2">
+                                    <a href="{{ path('user_admin_investors', {'option': 'all'}) }}"
+                                       class="btn btn-block btn-outline-info">Показать всех</a>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+    </div>
+    <div id="changeSponsor-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Смена спонсора</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <label for="investorUsername">Выберите инвестора</label>
+                                <input id="investorUsername"
+                                       name="investorUsername"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                            <div class="col-xs-12 investorInfoBlock p-20"></div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <label for="sponsorUsername">Выберите спонсора</label>
+                                <input id="sponsorUsername"
+                                       name="sponsorUsername"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите спонсора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                            <div class="col-xs-12 sponsorInfoBlock p-20"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <button type="submit" name="changeSponsor" class="btn btn-danger waves-effect waves-light">Изменить спонсора</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div id="investorPercent-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Изменение процента инвестора</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <label for="investorPercentUsername">Выберите инвестора</label>
+                                <input id="investorPercentUsername"
+                                       name="investorPercentUsername"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                            <div class="col-xs-12 investorPercentInfoBlock p-20"></div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input name="percent"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите процент"
+                                       autocomplete="off"
+                                       type="number" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <button type="submit" name="investorPercent" class="btn btn-danger waves-effect waves-light">Изменить</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div id="newUser-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {{ form_start(form) }}
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавление инвестора</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>При добавлении инвестора ему автоматически отправится СМС с паролем на указанный номер телефона.</h6>
+                    <div class="form-group row m-t-20">
+                        <div class="col-5">
+                            <select name="country" id="" class="form-control">
+                                {% for country in countries %}
+                                    <option
+                                            value="{{ country.phoneCode }}"
+                                            {% if country.name == 'Россия' %} selected="selected" {%  endif %}>
+                                        {{ country.name }}({{ country.phoneCode }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-7">
+                            {{ form_widget(form.username) }}
+                        </div>
+                    </div>
+                    <div class="form-group row m-t-20">
+                        <div class="col-6">
+                            {{ form_widget(form.name) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_widget(form.surname) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.bitcoinWallet) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.email) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.plainPassword) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.parentId) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.profitRate) }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                    {{ form_widget(form) }}
+                    {#<button#}
+                            {#type="button"#}
+                            {#id="sendInvoice"#}
+                            {#class="btn btn-danger waves-effect waves-light">Сохранить и отправить пароль</button>#}
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    <div id="editUser-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-horizontal form-material" id="inOutBalance">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Редактирование инвестора</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input id="editUser_username"
+                                       name="username"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input name="profitRate" required="required" class="form-control" placeholder="Введите процент доходности" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group editUserInfoBlock">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <div class="form-horizontal form-material">
+                            <div>
+                                <button type="submit" name="editUser" class="btn btn-danger waves-effect waves-light">Изменить %</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="inOutBalance-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-horizontal form-material" id="inOutBalance">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Вывод средств</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>После создания операции с личного счета спишется указанная сумма.</h6>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input id="withdraw_username"
+                                       name="username"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input name="sum"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите сумму"
+                                       type="number"
+                                       step="0.01"
+                                       min="0"
+                                       max="100">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <select name="currency" class="form-control">
+                                    {% for currency in currencies %}
+                                        <option value="{{ currency.id }}">{{ currency.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="bitcoinWallet">
+                            <div class="col-12">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <div class="form-horizontal form-material">
+                            <div>
+                                <input type="hidden" name="direction" value="in">
+                                <button type="submit" name="inOutBalance" class="btn btn-danger waves-effect waves-light">Сохранить и провести операцию</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="referalIncome-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-horizontal form-material" id="referalIncome">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Реферальное начисление</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>После создания операции на инвестиционный счет начислится указанная сумма.</h6>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input id="referalIncome_username"
+                                       name="username"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input name="sum" required="required" class="form-control" placeholder="Введите сумму" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <select name="currency" class="form-control">
+                                    {% for currency in currencies %}
+                                        <option value="{{ currency.id }}">{{ currency.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="userInfoBlock">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <div class="form-horizontal form-material">
+                            <div>
+                                <input type="hidden" name="type" value="in">
+                                <input type="hidden" name="account" value="in">
+                                <button type="submit" name="referalIncome" class="btn btn-danger waves-effect waves-light">Сохранить и провести операцию</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div id="transfer-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" class="form-horizontal form-material" id="inOutBalance">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Добавить операцию</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input id="transfer_username"
+                                       name="username"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите инвестора"
+                                       autocomplete="off"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <input name="sum"
+                                       required="required"
+                                       class="form-control"
+                                       placeholder="Введите сумму"
+                                       type="number"
+                                       step="0.01" min="0" max="0">
+                            </div>
+                        </div>
+                        <div class="form-group row m-t-20">
+                            <div class="col-12">
+                                <select name="currency" class="form-control">
+                                    {% for currency in currencies %}
+                                        <option value="{{ currency.id }}">{{ currency.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group userInfoBlock">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Отмена</button>
+                        <div class="form-horizontal form-material">
+                            <div>
+                                <input type="hidden" name="from" value="in">
+                                <input type="hidden" name="to" value="in">
+                                <button type="submit" name="transfer" class="btn btn-danger waves-effect waves-light">Сохранить и провести операцию</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}
+{% block page_scripts %}
+    <script>
+        jQuery('.inBalanceButton').on('click', function () {
+            jQuery('#inOutBalance-modal .modal-title').text('Пополнение счета');
+            jQuery('#inOutBalance-modal .modal-body>h6').text('После создания операции на личный счет начислится указанная сумма.');
+            jQuery('#withdraw_username').val('');
+            jQuery('#inOutBalance-modal input[name="direction"]').val('in');
+            jQuery('#inOutBalance-modal input[name="sum"]').removeAttr('max');
+        });
+        jQuery('.outBalanceButton').on('click', function () {
+            jQuery('#inOutBalance-modal .modal-title').text('Снятие со счета');
+            jQuery('#inOutBalance-modal .modal-body>h6').text('После создания операции с личного счета спишется указанная сумма.');
+            jQuery('#withdraw_username').val('');
+            jQuery('#inOutBalance-modal input[name="direction"]').val('out');
+        });
+        jQuery('.investAdd').on('click', function () {
+            jQuery('#referalIncome-modal .modal-title').text('Начисление доходности');
+            jQuery('#referalIncome-modal .modal-body>h6').text('После создания операции на инвестиционный счет начислится указанная сумма.');
+            jQuery('#referalIncome-modal input[name="type"]').val('Начисление доходности');
+            jQuery('#referalIncome-modal input[name="account"]').val('Инвестиционный счет');
+        });
+        jQuery('.referalAdd').on('click', function () {
+            jQuery('#referalIncome-modal .modal-title').text('Реферальное начисление');
+            jQuery('#referalIncome-modal .modal-body>h6').text('После создания операции на реферальный счет начислится указанная сумма.');
+            jQuery('#referalIncome-modal input[name="type"]').val('Реферальное начисление');
+            jQuery('#referalIncome-modal input[name="account"]').val('Реферальный счет');
+        });
+        jQuery('.persToInvest').on('click', function () {
+            jQuery('#transfer-modal input[name="from"]').val('Личный счет');
+            jQuery('#transfer-modal input[name="to"]').val('Инвестиционный счет');
+        });
+        jQuery('.investToPers').on('click', function () {
+            jQuery('#transfer-modal input[name="from"]').val('Инвестиционный счет');
+            jQuery('#transfer-modal input[name="to"]').val('Личный счет');
+        });
+        jQuery('.referalToPers').on('click', function () {
+            jQuery('#transfer-modal input[name="from"]').val('Реферальный счет');
+            jQuery('#transfer-modal input[name="to"]').val('Личный счет');
+        });
+        jQuery('.referalToInvest').on('click', function () {
+            jQuery('#transfer-modal input[name="from"]').val('Реферальный счет');
+            jQuery('#transfer-modal input[name="to"]').val('Инвестиционный счет');
+        });
+        jQuery( "#withdraw_username" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('#bitcoinWallet div').text(data.wallet);
+
+                if (jQuery('#inOutBalance-modal input[name="direction"]').val() == 'in'){
+                    jQuery('#inOutBalance-modal input[name="sum"]').removeAttr('max');
+                } else {
+                    jQuery('#inOutBalance-modal input[name="sum"]').attr('max', data.personalAccount);
+                }
+            });
+        });
+        jQuery( "#referalIncome_username" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('#userInfoBlock').html('<div class="col-xs-12">' + data.name + ' ' + data.surname + '</div>');
+            });
+        });
+
+        jQuery( "#editUser_username" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('#userInfoBlock').html('<div class="col-xs-12">' + data.name + ' ' + data.surname + '</div>');
+            });
+        });
+
+        jQuery( "#investorUsername" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('.investorInfoBlock').html(data.name + ' ' + data.surname);
+                jQuery('#sponsorUsername').val(data.parent);
+                jQuery('.sponsorInfoBlock').html(data.parentName + ' ' + data.parentSurname);
+            });
+        });
+
+        jQuery( "#sponsorUsername" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('.sponsorInfoBlock').html(data.name + ' ' + data.surname);
+            });
+        });
+
+        jQuery( "#investorPercentUsername" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('.investorPercentInfoBlock').html(data.name + ' ' + data.surname);
+                jQuery('#investorPercent-modal input[name="percent"]').val(data.profitRate);
+            });
+        });
+
+        jQuery( "#form_parentId" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        });
+        jQuery( "#transfer_username" ).autocomplete({
+            source:[
+                function( q,add ){
+                    $.post("{{ path('get_investors') }}", function(resp){
+                        add(resp.data)
+                    })
+                }
+            ],
+            visibleLimit: 5,
+        }).on('selected.xdsoft',function(e,datum){
+            jQuery.post('{{ path('get_investor_info') }}', {username: datum}, function (data) {
+                jQuery('#transfer-modal .userInfoBlock').html('<div class="col-xs-12">'
+                    + data.name + ' '
+                    + data.surname + '</div>');
+                var account = jQuery('#transfer-modal input[name="from"]').val();
+
+                if (account == 'Личный счет'){
+                    jQuery('#transfer-modal input[name="sum"]').attr('max', data.personalAccount);
+                } else if (account == 'Инвестиционный счет') {
+                    jQuery('#transfer-modal input[name="sum"]').attr('max', data.investAccount);
+                } else if(account == 'Реферальный счет'){
+                    jQuery('#transfer-modal input[name="sum"]').attr('max', data.referalAccount);
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

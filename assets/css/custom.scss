@@ -1,0 +1,43 @@
+// In this scss you can overwrite all our scss, we suggested you to add your scss into this, so whenever the update comes it will not affect your code.
+
+.avatar-upload > input{
+  display: none;
+}
+.avatar-upload > label > img{
+  cursor: pointer;
+}
+.font20{
+  font-size: 20px;
+}
+.comments-text{
+  font-size: 10px
+}
+.remove-doc{
+  padding: 12px 15px 10px;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
+.profit-sign{
+  padding-left: 40px;
+  padding-top: 20px;
+  font-weight: 700;
+  padding-bottom: 30px;
+}
+.xdsoft_autocomplete .xdsoft_autocomplete_dropdown{
+  position: relative !important;
+}
+.investorsTable{
+  font-size: 12px;
+}
+
+a.sortable, th.sorted a{
+  color: black;
+}
+th.sorted a.asc:after {
+  content: ' \25BC';
+}
+
+th.sorted a.desc:after {
+  content: ' \25B2';
+}

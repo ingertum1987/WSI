@@ -1,0 +1,651 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'page.user.balance.index.title'|trans }}{% endblock %}
+
+{% block body %}
+    <style>
+        .swal-text, .swal-footer {
+            text-align: center;
+        }
+    </style>
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">{{ 'page.user.balance.index.title'|trans }}</h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="row card-body">
+            <div class="col-4 font20">
+                <div class="btn-group">
+                    <button class="btn btn-info btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        {{ 'page.user.balance.index.personal_account.title'|trans }}
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           href="javascript:void(0)"
+                           data-toggle="modal"
+                           data-target="#addPersonal-modal">{{ 'page.user.balance.index.personal_account.input'|trans }}</a>
+                        {% if ("now"|date("d")) >= 8 %}
+                            <a class="dropdown-item" href="javascript:void(0)" id="withdrawPersonal">{{ 'page.user.balance.index.personal_account.output'|trans }}</a>
+                        {% else %}
+                            <a class="dropdown-item"
+                               href="javascript:void(0)"
+                               data-toggle="modal"
+                               data-target="#withdrawPersonal-modal">{{ 'page.user.balance.index.personal_account.output'|trans }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;{{ total['personal'] }} USD
+            </div>
+            <div class="col-4 font20">
+                <div class="btn-group">
+                    <button class="btn btn-info btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        {{ 'page.user.balance.index.invest_account.title'|trans }}
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           href="javascript:void(0)"
+                           data-toggle="modal"
+                           data-target="#addInvest-modal">{{ 'page.user.balance.index.invest_account.input'|trans }}</a>
+                        <a class="dropdown-item"
+                           href="javascript:void(0)"
+                           data-toggle="modal"
+                           data-target="#withdrawInvest-modal">{{ 'page.user.balance.index.invest_account.output'|trans }}</a>
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;{{ total['invest'] }} USD
+            </div>
+            <div class="col-4 font20">
+                <div class="btn-group">
+                    <button class="btn btn-info btn-lg dropdown-toggle" type="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        {{ 'page.user.balance.index.referral_account.title'|trans }}
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           href="javascript:void(0)"
+                           data-toggle="modal"
+                           data-target="#withdrawReferal-modal">{{ 'page.user.balance.index.referral_account.output'|trans }}</a>
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;{{ total['referral'] }} USD
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table m-t-30 table-hover no-wrap contact-list footable" data-page-size="10">
+                        <thead>
+                        <form action="">
+                            <tr>
+                                <th>
+                                    <input class="form-control" placeholder="{{ 'page.user.balance.index.operation_id'|trans }}" name="id" type="text">
+                                </th>
+                                <th>
+                                    <select name="type" class="form-control">
+                                        <optgroup>
+                                            <option value="">-</option>
+                                            <option value="in_1">{{ 'page.user.balance.index.account.input.personal'|trans }}</option>
+                                            <option value="in_2">{{ 'page.user.balance.index.account.input.invest'|trans }}</option>
+                                            <option value="in_3">{{ 'page.user.balance.index.account.input.referral'|trans }}</option>
+                                        </optgroup>
+                                        <optgroup>
+                                            <option value="out_1">{{ 'page.user.balance.index.account.output.personal'|trans }}</option>
+                                            <option value="out_2">{{ 'page.user.balance.index.account.output.invest'|trans }}</option>
+                                            <option value="out_3">{{ 'page.user.balance.index.account.output.referral'|trans }}</option>
+                                        </optgroup>
+                                    </select>
+                                </th>
+                                <th>
+                                    <input type="text" name="operationType" class="form-control">
+                                </th>
+                                <th>
+                                    <select name="status" class="form-control">
+                                        <option value="">-</option>
+                                        {% for status in statuses %}
+                                            <option value="{{ status.id }}">{{ status.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th>
+                                    <input type="date" class="form-control" name="date" placeholder="dd/mm/yyyy">
+                                </th>
+                                <th>
+                                    <input class="form-control" placeholder="сумма" name="sum" type="text">
+                                </th>
+                                <th>
+                                    <button type="submit" class="btn btn-outline-info btn-rounded"><i
+                                                class="fa fa-check"></i> {{ 'page.user.balance.index.filter'|trans }}
+                                    </button>
+                                </th>
+                            </tr>
+                        </form>
+                        <tr>
+                            <th class="{% if pagination.isSorted('t.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'ID', 't.id') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('a.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.transaction_type'|trans), 'a.id') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.type') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.operation'|trans), 't.type') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('s.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.status'|trans), 's.id') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.createdAt') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.date'|trans), 't.createdAt') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.sum') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.sum'|trans), 't.sum') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('c.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, ('page.user.balance.index.table.currency'|trans), 'c.id') }}
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for transaction in pagination %}
+                            <tr>
+                                <td>{{ transaction.id }}</td>
+                                <td>
+                                    {% if transaction.direction == 'in' %} {{ 'page.user.balance.index.input'|trans }} {% else %} {{ 'page.user.balance.index.output'|trans }} {% endif %} -
+                                    {{ transaction.account.name }}
+                                </td>
+                                <td>{{ transaction.type }}</td>
+                                <td>
+                                    {% if transaction.status.id == 1 %}
+                                        <span class="label label-inverse">{{ 'page.user.balance.index.status.processing'|trans }}</span>
+                                    {% elseif transaction.status.id == 2 %}
+                                        <span class="label label-success">{{ 'page.user.balance.index.status.success'|trans }}</span>
+                                    {% else %}
+                                        <span class="label label-warning">{{ 'page.user.balance.index.status.cancel'|trans }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ transaction.createdAt| date('d.m.Y H:i:s') }}</td>
+                                <td>{{ transaction.sum }}</td>
+                                <td>{{ transaction.currency.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="7">
+                                <div class="text-right">
+                                    {{ knp_pagination_render(pagination) }}
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="addPersonal-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.balance.index.modal.personal.title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>{{ 'page.user.balance.index.modal.personal.body'|trans }}</h6>
+                    <form name="invoiceForm">
+                        <div class="form-group">
+                            <label for="sum" class="control-label">{{ 'page.user.balance.index.modal.personal.sum'|trans }}</label>
+                            <input type="number" name="sum" min="10" value="10" class="form-control" id="sum">
+                        </div>
+                        <div class="form-group">
+                            <label for="wallet" class="control-label">{{ 'page.user.balance.index.modal.personal.wallet'|trans }}</label>
+                            <input type="text"
+                                   name="wallet"
+                                   class="form-control"
+                                   id="wallet"
+                                   value="{{ app.user.bitcoinWallet }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">{{ 'page.user.balance.index.modal.personal.password'|trans }}</label>
+                            <input type="password" name="password" required class="form-control" id="password">
+                            <div class="form-control-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments" class="control-label" id="sa-success">{{ 'page.user.balance.index.modal.personal.comment'|trans }}</label>
+                            <textarea class="form-control" name="comments" id="comments"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    <button
+                            type="button"
+                            id="sendInvoice"
+                            class="btn btn-danger waves-effect waves-light">{{ 'page.user.balance.index.modal.personal.replenish'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="addInvest-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.balance.index.modal.invest.title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>{{ 'page.user.balance.index.modal.invest.body'|trans }}</h6>
+                    <form name="invoiceInvestForm">
+                        <div class="form-group">
+                            <label for="sum" class="control-label">{{ 'page.user.balance.index.modal.invest.sum'|trans }}</label>
+                            <input type="number"
+                                   name="sum"
+                                   min="10"
+                                   value="10"
+                                   class="form-control"
+                                   max="{{ userPanel.getPersonalAccountBalance }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="account" class="control-label">{{ 'page.user.balance.index.modal.invest.scrappage_account.title'|trans }}</label>
+                            <select name="account" class="form-control">
+                                <option value="1">{{ 'page.user.balance.index.modal.invest.scrappage_account.personal'|trans }}</option>
+                                <option value="3">{{ 'page.user.balance.index.modal.invest.scrappage_account.referral'|trans }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">{{ 'page.user.balance.index.modal.invest.scrappage_account.password'|trans }}</label>
+                            <input type="password" name="password" required class="form-control">
+                            <div class="form-control-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments" class="control-label">{{ 'page.user.balance.index.modal.invest.scrappage_account.comment'|trans }}</label>
+                            <textarea class="form-control" name="comments"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    <button
+                            type="button"
+                            id="sendInvoiceInvest"
+                            class="btn btn-danger waves-effect waves-light">{{ 'page.user.balance.index.modal.invest.scrappage_account.replenish'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="withdrawInvest-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.balance.index.modal.invest_output.title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>{{ 'page.user.balance.index.modal.invest_output.body'|trans }}</h6>
+                    <form name="withdrawInvestInvoiceForm">
+                        <div class="form-group">
+                            <label for="sum" class="control-label">{{ 'page.user.balance.index.modal.invest_output.sum'|trans }}</label>
+                            <input type="number"
+                                   name="sum"
+                                   min="10"
+                                   value="10"
+                                   class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="account" class="control-label">{{ 'page.user.balance.index.modal.invest_output.account'|trans }}</label>
+                            <select name="account" class="form-control">
+                                <option value="1">{{ 'page.user.balance.index.modal.invest_output.personal'|trans }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">{{ 'page.user.balance.index.modal.invest_output.password'|trans }}</label>
+                            <input type="password" name="password" required class="form-control">
+                            <div class="form-control-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments" class="control-label">{{ 'page.user.balance.index.modal.invest_output.comment'|trans }}</label>
+                            <textarea class="form-control" name="comments"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    <button
+                            type="button"
+                            id="sendWithdrawInvestInvoice"
+                            class="btn btn-danger waves-effect waves-light">{{ 'page.user.balance.index.modal.invest_output.output'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="withdrawPersonal-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.balance.index.modal.personal_output.title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>{{ 'page.user.balance.index.modal.personal_output.body'|trans }}</h6>
+                    <form name="withdrawInvoiceForm">
+                        <div class="form-group">
+                            <label for="sum" class="control-label">{{ 'page.user.balance.index.modal.personal_output.sum'|trans }}</label>
+                            <input type="number"
+                                   name="sum"
+                                   min="10"
+                                   value="10"
+                                   class="form-control"
+                                   id="sum">
+                        </div>
+                        <div class="form-group">
+                            <label for="wallet" class="control-label">{{ 'page.user.balance.index.modal.personal_output.wallet'|trans }}</label>
+                            <select name="wallet" class="form-control">
+                                <option value="{{ app.user.bitcoinWallet }}">{{ app.user.bitcoinWallet }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">{{ 'page.user.balance.index.modal.personal_output.password'|trans }}</label>
+                            <input type="password" name="password" required class="form-control">
+                            <div class="form-control-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments" class="control-label">{{ 'page.user.balance.index.modal.personal_output.comment'|trans }}</label>
+                            <textarea class="form-control" name="comments"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    <button
+                            type="button"
+                            id="sendWithdrawInvoice"
+                            class="btn btn-danger waves-effect waves-light">{{ 'page.user.balance.index.modal.personal_output.output'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="withdrawReferal-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.balance.index.modal.referral_output.title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h6>{{ 'page.user.balance.index.modal.referral_output.body'|trans }}</h6>
+                    <form name="withdrawReferalInvoiceForm">
+                        <div class="form-group">
+                            <label for="sum" class="control-label">{{ 'page.user.balance.index.modal.referral_output.sum'|trans }}</label>
+                            <input type="number"
+                                   name="sum"
+                                   min="10"
+                                   value="10"
+                                   max="{{ userPanel.getReferalAccountBalance() }}"
+                                   class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="account" class="control-label">{{ 'page.user.balance.index.modal.referral_output.account'|trans }}</label>
+                            <select name="account" class="form-control">
+                                <option value="1">{{ 'page.user.balance.index.modal.referral_output.personal'|trans }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">{{ 'page.user.balance.index.modal.referral_output.password'|trans }}</label>
+                            <input type="password" name="password" required class="form-control">
+                            <div class="form-control-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comments" class="control-label">{{ 'page.user.balance.index.modal.referral_output.comment'|trans }}</label>
+                            <textarea class="form-control" name="comments"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    <button
+                            type="button"
+                            id="sendWithdrawReferalInvoice"
+                            class="btn btn-danger waves-effect waves-light">{{ 'page.user.balance.index.modal.referral_output.output'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        jQuery('#invite-link').on('click', function (e) {
+            var link = jQuery(this).data('link');
+            var $temp = jQuery("<input>");
+            jQuery("body").append($temp);
+            $temp.val(link).select();
+            document.execCommand("Copy");
+        });
+        $('#sendInvoice').on('click', function () {
+            form = new FormData(document.forms.invoiceForm);
+
+            if (form.get('wallet') != '' && form.get('password') != '') {
+                $('#sendInvoice').attr("disabled", "disabled");
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("POST", '{{ path('cabinet_user_balance_input_personal') }}', true);
+                xhr.send(form);
+
+                xhr.onreadystatechange = function () {
+                    if (this.readyState != 4) return;
+                    if (this.status != 200) {
+                        return;
+                    }
+
+                    if (xhr.responseText == 'success') {
+                        $('#addPersonal-modal').modal('hide');
+                        swal("{{ 'page.user.balance.index.swal.success'|trans }}", "{{ 'page.user.balance.index.swal.personal_input'|trans }}", "success")
+                        $('#sendInvoice').removeAttr("disabled");
+                    } else if (xhr.responseText == 'pass_error') {
+                        $('#password').parent().addClass('has-danger');
+
+                        $('#password').next().text('{{ 'page.user.balance.index.swal.wrong_password'|trans }}');
+                    }
+                }
+            } else if (form.get('wallet') == '') {
+                $('#wallet').parent().addClass('has-danger');
+            } else if (form.get('password') == '') {
+                $('#password').parent().addClass('has-danger');
+            }
+        });
+        $('#sendWithdrawInvoice').on('click', function () {
+            form = new FormData(document.forms.withdrawInvoiceForm);
+
+            if (form.get('wallet') != '' && form.get('password') != '') {
+                $('#sendWithdrawInvoice').attr("disabled", "disabled");
+                $.ajax({
+                    url: "{{ path('cabinet_user_balance_output_personal') }}",
+                    type: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, textStatus, jqXHR) {
+                        if (data.status == 'pass_error') {
+                            $('#withdrawPersonal-modal input[name="password"]').parent().addClass('has-danger');
+                            $('#withdrawPersonal-modal .form-control-feedback').text(data.message);
+                        } else if (data.status == 'sum_error') {
+                            $('#withdrawPersonal-modal input[name="sum"]').parent().addClass('has-danger');
+                            $('.form-control-feedback').text(data.message).css('color', 'red');
+                        } else if (data.status == 'success') {
+                            $('#withdrawPersonal-modal').modal('hide');
+                            swal("{{ 'page.user.balance.index.swal.success'|trans }}", '{{ 'page.user.balance.index.swal.personal_output'|trans({'%fullname%':(app.user.name~' '~app.user.surname)}) }}', "success");
+                            $('#sendWithdrawInvoice').removeAttr("disabled");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        //if fails
+                    }
+                });
+            } else if (form.get('wallet') == '') {
+                $('#wallet').parent().addClass('has-danger');
+            } else if (form.get('password') == '') {
+                $('#password').parent().addClass('has-danger');
+            }
+        });
+        $('#sendInvoiceInvest').on('click', function () {
+            form = new FormData(document.forms.invoiceInvestForm);
+
+            if (form.get('password') != '') {
+                $('#sendInvoiceInvest').attr("disabled", "disabled");
+                $.ajax({
+                    url: "{{ path('cabinet_user_balance_input_invest') }}",
+                    type: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, textStatus, jqXHR) {
+
+                        if (data.status == 'pass_error') {
+                            $('form[name="invoiceInvestForm"] input[name="password"]').parent().addClass('has-danger');
+                            $('form[name="invoiceInvestForm"] .form-control-feedback').text(data.message);
+                        } else if (data.status == 'sum_error') {
+                            $('#addInvest-modal input[name="sum"]').parent().addClass('has-danger');
+                            $('#addInvest-modal .form-control-feedback').text(data.message).css('color', 'red');
+                        } else if (data.status == 'success') {
+                            $('#addInvest-modal').modal('hide');
+                            swal("{{ 'page.user.balance.index.swal.success'|trans }}", "{{ 'page.user.balance.index.swal.invvest_input'|trans }}", "success")
+                            $('#sendInvoiceInvest').removeAttr("disabled");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        //if fails
+                    }
+                });
+            } else {
+                $('form[name="invoiceInvestForm"] input[name="password"]').parent().addClass('has-danger');
+            }
+        });
+        $('#sendWithdrawInvestInvoice').on('click', function () {
+            form = new FormData(document.forms.withdrawInvestInvoiceForm);
+
+            if (form.get('password') != '') {
+                $('#sendWithdrawInvestInvoice').attr("disabled", "disabled");
+                $.ajax({
+                    url: "{{ path('cabinet_user_balance_output_invest') }}",
+                    type: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, textStatus, jqXHR) {
+
+                        if (data.status == 'pass_error') {
+                            $('form[name="withdrawInvestInvoiceForm"] input[name="password"]').parent().addClass('has-danger');
+                            $('form[name="withdrawInvestInvoiceForm"] .form-control-feedback').text(data.message);
+                        } else if (data.status == 'sum_error') {
+                            $('#withdrawInvest-modal input[name="sum"]').parent().addClass('has-danger');
+                            $('#withdrawInvest-modal .form-control-feedback').text(data.message).css('color', 'red');
+                        } else if (data.status == 'success') {
+                            $('#withdrawInvest-modal').modal('hide');
+                            swal("{{ 'page.user.balance.index.swal.success'|trans }}", "{{ 'page.user.balance.index.swal.invvest_output'|trans }}", "success")
+                            $('#sendWithdrawInvestInvoice').removeAttr("disabled");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        //if fails
+                    }
+                });
+            } else {
+                $('form[name="withdrawInvestInvoiceForm"] input[name="password"]').parent().addClass('has-danger');
+            }
+        });
+        $('#sendWithdrawReferalInvoice').on('click', function () {
+            form = new FormData(document.forms.withdrawReferalInvoiceForm);
+
+            if (form.get('password') != '') {
+                $('#sendWithdrawReferalInvoice').attr("disabled", "disabled");
+                $.ajax({
+                    url: "{{ path('cabinet_user_balance_output_referral') }}",
+                    type: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, textStatus, jqXHR) {
+
+                        if (data.status == 'pass_error') {
+                            $('form[name="withdrawReferalInvoiceForm"] input[name="password"]').parent().addClass('has-danger');
+                            $('form[name="withdrawReferalInvoiceForm"] .form-control-feedback').text(data.message);
+                        } else if (data.status == 'sum_error') {
+                            $('#withdrawReferal-modal input[name="sum"]').parent().addClass('has-danger');
+                            $('#withdrawReferal-modal .form-control-feedback').text(data.message).css('color', 'red');
+                        } else if (data.status == 'success') {
+                            $('#withdrawReferal-modal').modal('hide');
+                            swal("{{ 'page.user.balance.index.swal.success'|trans }}", "{{ 'page.user.balance.index.swal.referral_output'|trans }}", "success")
+                            $('#sendWithdrawReferalInvoice').removeAttr("disabled");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        //if fails
+                    }
+                });
+            } else {
+                $('form[name="withdrawReferalInvoiceForm"] input[name="password"]').parent().addClass('has-danger');
+            }
+        });
+        $('form[name="invoiceInvestForm"] select[name="account"]').on('change', function () {
+
+            if ($(this).val() == 1) {
+                $('form[name="invoiceInvestForm"] input[name="sum"]').attr('max', '{{ userPanel.getPersonalAccountBalance }}')
+            } else {
+                $('form[name="invoiceInvestForm"] input[name="sum"]').attr('max', '{{ userPanel.getInvestAccountBalance() }}')
+            }
+        });
+        jQuery('a[data-toggle="modal"]').on('click', function () {
+            $('.form-control-feedback').text('');
+            $('input[name="sum"]').parent().removeClass('has-danger');
+        });
+        $('#withdrawPersonal').on('click', function () {
+            swal({
+                title: "{{ 'page.user.balance.index.modal.personal.denied.title'|trans }}",
+                text: "{{ 'page.user.balance.index.modal.personal.denied.text'|trans }}",
+                icon: "warning",
+                button: "{{ 'page.user.balance.index.modal.personal.denied.button'|trans }}",
+            });
+        });
+    </script>
+{% endblock %}

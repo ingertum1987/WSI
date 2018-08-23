@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Вопрос-ответ{% endblock %}
+
+{% block body %}
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Чат</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card m-b-0">
+                <div class="chat-main-box">
+                    <div class="chat-left-aside">
+                        <div class="open-panel"><i class="ti-angle-right"></i></div>
+                        <div class="chat-left-inner" style="height: 214px;">
+                            <ul class="chatonline style-none ps ps--theme_default">
+                                {% for row in users %}
+                                    {% set user=row.user %}
+                                    <li>
+                                        <a href="{{ path('chat_index', {'chatUser':user.id}) }}"{% if chatUser and user.id==chatUser.id %} class="active"{% endif %}>
+                                            <img src="{{ asset(user.getFotoWithPath) }}" alt="avatar"
+                                                 class="img-circle">
+                                            <span>
+                                                {{ user.fullname }}
+                                                <span class="text-nowrap">
+                                                    [ {% if row.messages_new_count %}
+                                                        <span class="font-weight-bold ">{{ row.messages_new_count }}</span>
+                                                        / {% endif %}{{ row.messages_count }}
+                                                    ]</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                <li class="p-20"></li>
+                                <div class="ps__scrollbar-x-rail" style="left: 0; bottom: 0;">
+                                    <div class="ps__scrollbar-x" tabindex="0" style="left: 0; width: 0;"></div>
+                                </div>
+                                <div class="ps__scrollbar-y-rail" style="top: 0; right: 0;">
+                                    <div class="ps__scrollbar-y" tabindex="0" style="top: 0; height: 0;"></div>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chat-right-aside">
+                        <div class="chat-main-header">
+                            <div class="p-3 b-b">
+                                <h4 class="box-title">Переписка</h4>
+                            </div>
+                        </div>
+                        <div class="chat-rbox ps ps--theme_default">
+                            <ul class="chat-list p-3" style="height: 34px;">
+                                {% for message in messages %}
+                                    {% if message.sender == app.user %}
+                                        <li>
+                                            <div class="chat-img"><img
+                                                        src="{{ asset(message.sender.getFotoWithPath) }}" alt="avatar">
+                                            </div>
+                                            <div class="chat-content">
+                                                <h5>{{ message.sender.fullname }}</h5>
+                                                <div class="box bg-light-info">{{ message.text }}</div>
+                                                <div class="chat-time">{{ message.createdAt|ago }}</div>
+                                            </div>
+                                        </li>
+                                    {% else %}
+                                        <li class="reverse">
+                                            <div class="chat-content">
+                                                <h5>{{ message.sender.fullname }}</h5>
+                                                <div class="box bg-light-inverse">{{ message.text }}</div>
+                                                <div class="chat-time">{{ message.createdAt|ago }}</div>
+                                            </div>
+                                            <div class="chat-img"><img
+                                                        src="{{ asset(message.sender.getFotoWithPath) }}" alt="user">
+                                            </div>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <div class="ps__scrollbar-x-rail" style="left: 0; bottom: 0;">
+                                <div class="ps__scrollbar-x" tabindex="0" style="left: 0; width: 0;"></div>
+                            </div>
+                            <div class="ps__scrollbar-y-rail" style="top: 0; right: 0;">
+                                <div class="ps__scrollbar-y" tabindex="0" style="top: 0; height: 0;"></div>
+                            </div>
+                        </div>
+                        {% if chatUser %}
+                            {{ form_start(form) }}
+                            <div class="card-body border-top">
+                                <div class="row">
+                                    <div class="col-8">
+                                        {{ form_widget(form.text, { 'attr': {'class': "form-control border-0", 'placeholder': form.text.vars.label} }) }}
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <button type="submit" class="btn btn-info btn-circle btn-lg">
+                                            <i class="fa fa-paper-plane-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form_end(form) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

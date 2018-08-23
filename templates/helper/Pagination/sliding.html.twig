@@ -1,0 +1,38 @@
+{% if pageCount > 1 %}
+<ul class="pagination">
+    {% if first is defined and current != first %}
+        <li class="footable-page-arrow first">
+            <a href="{{ path(route, query|merge({(pageParameterName): first})) }}">&lt;&lt;</a>
+        </li>
+    {% endif %}
+
+    {% if previous is defined %}
+        <li class="footable-page-arrow prev">
+            <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}">&lt;</a>
+        </li>
+    {% endif %}
+
+    {% for page in pagesInRange %}
+        {% if page != current %}
+            <li class="footable-page">
+                <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+            </li>
+        {% else %}
+            <li class="footable-page active"><a href="#">{{ page }}</a></li>
+        {% endif %}
+
+    {% endfor %}
+
+    {% if next is defined %}
+        <li class="footable-page-arrow next">
+            <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">&gt;</a>
+        </li>
+    {% endif %}
+
+    {% if last is defined and current != last %}
+        <li class="footable-page-arrow last">
+            <a href="{{ path(route, query|merge({(pageParameterName): last})) }}">&gt;&gt;</a>
+        </li>
+    {% endif %}
+</ul>
+{% endif %}

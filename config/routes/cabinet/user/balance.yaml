@@ -1,0 +1,11 @@
+cabinet_user_balance:
+    resource: App\Controller\Cabinet\User\BalanceController
+    prefix: /
+
+cabinet_user_balance_input:
+    resource: App\Controller\Cabinet\User\Balance\InputController
+    prefix: /input
+
+cabinet_user_balance_output:
+    resource: App\Controller\Cabinet\User\Balance\OutputController
+    prefix: /output

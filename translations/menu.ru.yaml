@@ -1,0 +1,11 @@
+main:
+    profile: Профиль
+    balance: Баланс
+    partner: Партнёры
+    statistics: Статистика
+    documents: Документы
+    contacts: Контакты
+    transactions: Операции
+    investors: Инвесторы
+    settings: Настройки системы
+    logout: Выход

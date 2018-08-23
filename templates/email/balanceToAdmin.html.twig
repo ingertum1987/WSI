@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ operationName }}</title>
+</head>
+<body>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>{{ operationName }}</h1>
+    <ul>
+        <li>Инвестор ({{ app.user.name }} {{ app.user.surname }}) создал запрос "{{ operationName }}"</li>
+        <li>Операция №: {{ transaction.id }}</li>
+        <li>Имя: {{ app.user.name }}</li>
+        <li>Фамилия: {{ app.user.surname }}</li>
+        {% if transaction.type %}
+        <li>Тип операции: {{ transaction.type }}</li>
+        {% endif %}
+        <li>Со счета: {{ from }}</li>
+        <li>На счет: {{ to }}</li>
+        <li>Сумма: {{ sum }}</li>
+        <li>Валюта: {{ currency }}</li>
+        {% if wallet %}
+            <li>Биткоин кошелёк: {{ wallet }}</li>
+        {% endif %}
+        <li>Дата: {{ transaction.createdAt.format('d.m.Y H:i') }}</li>
+    </ul>
+    <div>
+        С уважением, команда WSI.
+    </div>
+</div>
+</body>
+</html>

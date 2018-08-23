@@ -1,0 +1,26 @@
+help:
+    profile:
+        showInvestor: Подтверждаю, что даю разрешение моему спонсору видеть информацию о моем доходе и реферальном доходе
+placeholder:
+    profile:
+        name: Иван
+        surname: Иванов
+        username: 123 456 7890
+        password: Пароль
+    document:
+        name: Название документа
+form:
+    save: Сохранить
+    cancel: Отмена
+    profile:
+        name: Имя
+        surname: Фамилия
+        username: Номер телефона
+        password: Пароль
+        bitcoinWallet: Номер bitcoin кошелька
+        showInvestor: Информация о доходе видна спонсору
+        submit: Обновить профиль
+    document:
+        name: Название файла
+        img: Картинка
+        file: Документ

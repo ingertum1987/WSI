@@ -1,0 +1,78 @@
+user_dash:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults:
+        path: /cabinet/user/profile
+        permanent: true
+
+user_partner:
+    path: /partner
+    controller: App\Controller\UserController::partner
+
+user_balance:
+    path: /balance
+    controller: App\Controller\UserController::balance
+
+user_statistics:
+    path: /statistics
+    controller: App\Controller\UserController::statistics
+
+user_admin_transactions:
+    path: /transactions
+    controller: App\Controller\AdminController::transactions
+
+user_admin_import_preview:
+    path: /import/preview
+    controller: App\Controller\Admin\ImportController::preview
+    methods: [post]
+
+user_admin_import_go:
+    path: /import/go
+    controller: App\Controller\Admin\ImportController::go
+    methods: [post]
+
+user_admin_investors:
+    path: /investors
+    controller: App\Controller\AdminController::investors
+
+user_contacts:
+    path: /contacts
+    controller: App\Controller\UserController::contacts
+
+user_briefcase:
+    path: /briefcase
+    controller: App\Controller\UserController::briefcase
+
+user_admin_settings:
+    path: /settings
+    controller: App\Controller\AdminController::settings
+
+send_show_sponsor_request:
+    path: /sendShowSponsorRequest
+    controller: App\Controller\UserController::sendShowSponsorRequest
+
+user_change_avatar:
+    path: /user_change_avatar
+    controller: App\Controller\UserController::changeAvatar
+
+export_users:
+    path: /export
+    controller: App\Controller\ExportController::exportUsersWithBalances
+
+get_investors:
+    path: /getInvestors
+    controller: App\Controller\UserController::getInvestors
+
+get_investor_info:
+    path: /getInvestorInfo
+    controller: App\Controller\UserController::getInvestorInfo
+
+get_profit:
+    path: /getProfit
+    controller: App\Controller\AdminController::getProfit
+
+user_switchShowSponsor:
+    path: /switch-show-sponsor/{active}/{hash}
+    controller: App\Controller\UserController::switchShowSponsor
+    requirements:
+        active: 0|1

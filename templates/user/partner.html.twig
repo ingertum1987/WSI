@@ -1,0 +1,207 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Инвестиции партнеров{% endblock %}
+
+{% block body %}
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Инвестиции партнеров</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <button id="invite-link" class="btn btn-info">Ссылка для партнеров</button>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="row">
+        <!-- Column -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="tablesaw table-bordered table-hover table">
+                        <thead>
+                        {{ form_start(searchForm) }}
+                            <tr>
+                                <th colspan="7" class="text-right">
+                                    <button type="submit" class="btn btn-outline-info btn-rounded"><i class="fa fa-check"></i> Фильтр</button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    {{ form_widget(searchForm.id, { 'attr': {'class': "form-control", 'placeholder': searchForm.id.vars.label,
+                                        'value':app.request.query.get('partner_search')['id']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.name, { 'attr': {'class': "form-control", 'placeholder': searchForm.name.vars.label,
+                                        'value':app.request.query.get('partner_search')['name']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.surname, { 'attr': {'class': "form-control", 'placeholder': searchForm.surname.vars.label,
+                                        'value':app.request.query.get('partner_search')['surname']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.createdAt, { 'attr': {'class': "form-control", 'placeholder': searchForm.createdAt.vars.label,
+                                        'value':app.request.query.get('partner_search')['createdAt']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.sum, { 'attr': {'class': "form-control", 'placeholder': searchForm.sum.vars.label,
+                                        'value':app.request.query.get('partner_search')['sum']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.income, { 'attr': {'class': "form-control", 'placeholder': searchForm.income.vars.label,
+                                        'value':app.request.query.get('partner_search')['income']|default('')} }) }}
+                                </th>
+                                <th>
+                                    {{ form_widget(searchForm.refincome, { 'attr': {'class': "form-control", 'placeholder': searchForm.refincome.vars.label,
+                                        'value':app.request.query.get('partner_search')['refincome']|default('')} }) }}
+                                </th>
+                            </tr>
+                        {{ form_end(searchForm) }}
+                        <tr>
+                            <th>Id инвестора</th>
+                            <th>Имя</th>
+                            <th>Фамилия</th>
+                            <th>Дата инвестирования</th>
+                            <th>
+                                Сумма инвестирования
+                            </th>
+                            <th>Доход</th>
+                            <th>Реферальный доход</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for income in invitedIncomes %}
+                        <tr>
+                            <td>{{ income.user.id }}</td>
+                            <td>{{ income.user.name }}</td>
+                            <td>{{ income.user.surname }}</td>
+                            <td>{{ income.createdAt|date('d.m.Y') }}</td>
+                            <td>{{ income.sum }}</td>
+                            <td class="text-center">
+                                {% if income.user.showInvestor == true %}
+                                    {{ userPanel.getInvestReturnRate(income.user.profitRate)|number_format(2, '.', ',') }} %
+                                {% elseif income.user.receivedRequestShowInvestor%}
+                                    <button type="button"
+                                            class="btn waves-effect waves-light btn-outline-info requestShow disabled"
+                                            >Ожидает согласования</button>
+                                    {% else %}
+                                    <button type="button"
+                                            class="btn waves-effect waves-light btn-outline-info requestShow"
+                                            data-id="{{ income.user.id }}">Запросить</button>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if income.user.showInvestor == true %}
+                                    {{ transactionRepo.getTotalUserAccount(income.user, account, status) }}
+                                {% elseif income.user.receivedRequestShowInvestor%}
+                                    <button type="button"
+                                            class="btn waves-effect waves-light btn-outline-info requestShow disabled"
+                                    >Ожидает согласования</button>
+                                {% else %}
+                                    <button type="button"
+                                            class="btn waves-effect waves-light btn-outline-info requestShow"
+                                            data-id="{{ income.user.id }}">Запросить</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+    </div>
+    <!-- Row -->
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}
+{% block page_scripts %}
+    <script>
+        $('#partner_search_createdAt').datepicker({
+            format: "dd.mm.yyyy",
+            language: "ru",
+            autoclose: true
+        });
+        jQuery('#invite-link').on('click' ,function (e) {
+            var span = document.createElement("div");
+            span.setAttribute('id','promo-link');
+            span.innerHTML = "{{ app.request.getSchemeAndHttpHost() }}{{ path('register', {'invite' : app.user.promoCode}) }}";
+            swal({
+                title: "Ваш код партнера",
+                text: "{{ app.user.promoCode }}",
+                content: span,
+                icon: "success",
+                buttons: {
+                    confirm: {
+                        text: "Скопировать код",
+                        value: true,
+                        visible: true,
+                        className: "copy-promocode",
+                        closeModal: true
+                    },
+                    hello: {
+                        text: "Скопировать ссылку",
+                        value: false,
+                        visible: true,
+                        className: "copyPromoLink"
+                    }
+                }
+            }).then(function($data){
+                console.log($data);
+                if ($data){
+                    var link = "{{ app.user.promoCode }}";
+                } else {
+                    var link = "{{ app.request.getSchemeAndHttpHost() }}{{ path('register', {'invite' : app.user.promoCode}) }}";
+                }
+                var $temp = jQuery("<input>");
+                jQuery("body").append($temp);
+                $temp.val(link).select();
+                document.execCommand("Copy");
+
+                if ($data){
+                    swal("Получилось!", "Ваша партнерский код скопирован.", "success");
+                } else {
+                    swal("Получилось!", "Ваша партнерская ссылка скопирована.", "success");
+                }
+            });
+        });
+        jQuery('.copy-promocode').on('click',function (e) {
+            e.preventDefault();
+            var link = "{{ app.user.promoCode }}";
+            var $temp = jQuery("<input>");
+            jQuery("body").append($temp);
+            $temp.val(link).select();
+            document.execCommand("Copy");
+        });
+        jQuery('.requestShow').on('click', function (e) {
+            var xhr = new XMLHttpRequest();
+            form = new FormData();
+            form.append('id', jQuery(this).data('id'));
+
+            xhr.open("POST", '{{ path('send_show_sponsor_request') }}', true);
+            xhr.send(form);
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState != 4) return;
+                if (this.status != 200) {
+                    return;
+                }
+
+                if (xhr.responseText == 'success'){
+                    swal("Успешно!", "Запрос отправлен.", "success")
+                }
+            }
+        });
+    </script>
+{% endblock %}

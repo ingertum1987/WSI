@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon2.png">
+    <title>WSI</title>
+
+    <!-- page css -->
+    <link href="{{ asset('/build/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('/build/login.css') }}" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+
+<body>
+<!-- ============================================================== -->
+<!-- Preloader - style you can find in spinners.css -->
+<!-- ============================================================== -->
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">Загрузка</p>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<section id="wrapper" class="login-register login-sidebar"
+         style="background-image:url({{ asset('build/images/login-register.jpg') }});">
+    <div class="login-box card">
+        <div class="card-body">
+            <form class="form-horizontal form-material"
+                  id="loginform"
+                  action="{{ path('login') }}"
+                  method="post">
+                <a href="javascript:void(0)" class="text-center db">
+                    <img src="{{ asset('build/images/logo-icon.png') }}" alt="Home" />
+                    <br/><img src="{{ asset('build/images/logo-text.png') }}" alt="Home" />
+                </a>
+                <div class="form-group row m-t-20">
+                    <div class="col-5">
+                        <select name="phoneCode" id="" class="form-control">
+                            {% for country in countries %}
+                                <option
+                                        value="{{ country.phoneCode }}"
+                                        {% if country.name == 'Россия' %} selected="selected" {%  endif %}>
+                                    {{ country.name }}({{ country.phoneCode }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-7">
+                        <input class="form-control" type="text"
+                               required="required"
+                               name="phoneNumber"
+                               value=""
+                               placeholder="Номер телефона">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <input class="form-control"
+                               type="password"
+                               required="required"
+                               name="_password"
+                               placeholder="Пароль">
+                    </div>
+                </div>
+                {% if error %}
+                    <div style="color: #fa6f46">Неверный пароль. Проверьте правильность ввода пароля или восстановите его, нажав на кнопку: "Забыли пароль?".</div>
+                {% endif %}
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div class="custom-control custom-checkbox">
+                            <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right">
+                                <i class="fa fa-lock m-r-5"></i> Забыли пароль?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group text-center m-t-20">
+                    <div class="col-xs-12">
+                        <button class="btn btn-info btn-lg btn-block text-uppercase btn-rounded"
+                                type="submit">Войти</button>
+                    </div>
+                </div>
+                <div class="form-group m-b-0">
+                    <div class="col-sm-12 text-center">
+                        Нет аккаунта? <a href="{{ path('register') }}"
+                                         class="text-primary m-l-5"><b>Регистрация</b></a>
+                    </div>
+                </div>
+            </form>
+            <form class="form-horizontal"
+                  id="recoverform"
+                  method="post">
+                <div class="form-group ">
+                    <div class="col-xs-12">
+                        <h3>Восстановить пароль</h3>
+                        <p class="text-muted">Введите номер телефона и получите пароль! </p>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="form-group row m-t-20">
+                        <div class="col-5">
+                            <select name="phoneCode" id="phoneCode" class="form-control">
+                                {% for country in countries %}
+                                    <option
+                                            value="{{ country.phoneCode }}"
+                                            {% if country.name == 'Россия' %} selected="selected" {%  endif %}>
+                                        {{ country.name }}({{ country.phoneCode }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-7">
+                            <input class="form-control" type="text"
+                                   required="required"
+                                   id="phoneNumber"
+                                   name="phoneNumber"
+                                   value=""
+                                   placeholder="Номер телефона">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group text-center m-t-20">
+                    <div class="col-xs-12">
+                        <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light"
+                                type="submit">Получить пароль
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- ============================================================== -->
+<!-- End Wrapper -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- All Jquery -->
+<!-- ============================================================== -->
+<script src="{{ asset('build/app.js') }}"></script>
+<!--Custom JavaScript -->
+<script type="text/javascript">
+    {% if app.request.query.get('register') == 'success' %}
+    $( document ).ready(function() {
+        swal({
+            title: "Поздравляем",
+            html: "Ваша учетная запись успешно создана, пароль выслан на указанный Вами мобильный телефон, теперь Вы можете войти в личный кабинет",
+            type: "success"
+        });
+    });
+    {% endif %}
+    $(function() {
+        $(".preloader").fadeOut();
+    });
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+    $( "#recoverform" ).submit(function( event ) {
+        $.getJSON(Routing.generate('recover_password', {'phone':$('#phoneCode').val()+$('#phoneNumber').val()}), function (data) {
+            swal({
+                title: (data.status === 200 ? "Поздравляем" : "Ошибка"),
+                html: data.text,
+                type: (data.status === 200 ? "success" : "error")
+            });
+        });
+        setTimeout(function() { window.location.href = Routing.generate('login'); }, 5000);
+        return false;
+    });
+    // ==============================================================
+    // Login and Recover Password
+    // ==============================================================
+    $('#to-recover').on("click", function() {
+        $("#loginform").slideUp();
+        $("#recoverform").fadeIn();
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Предварительный просмотр{% endblock %}
+
+{% block body %}
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Предварительный просмотр</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <form action="{{ path('user_admin_import_go') }}" method="post">
+                <input type="hidden" name="returnRate" value="{{ returnRate }}">
+                {% for phone, row in rows %}
+                    {% if not row.error %}
+                    <input type="hidden" name="date" value="{{ date }}">
+                    <input type="hidden" name="returnRate" value="{{ returnRate }}">
+                    <input type="hidden" name="phone[]" value="{{ phone }}">
+                    <input type="hidden" name="profitRateNew[{{ phone }}]" value="{{ row.profitRateNew }}">
+                    <input type="hidden" name="investSum[{{ phone }}]" value="{{ row.investSum }}">
+                    <input type="hidden" name="referralSum[{{ phone }}]" value="{{ row.referralNew }}">
+                    {% endif %}
+                {% endfor %}
+                <a href="{{ path('user_admin_settings') }}" class="btn btn-outline-secondary btn-rounded">Назад</a>
+                <button class="btn waves-effect waves-light btn-rounded btn-success" {% if countErrors > 0 %}disabled{% endif %} type="submit">Подтвердить</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card" style="overflow: auto;">
+                <div class="card-body">
+                    {% if countErrors > 0 %}
+                        <h3>Внимание! Данные в таблице и в системе не совпадают! Проверьте правильность указанных в таблице данных</h3>
+                    {% endif %}
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Инвестор № Тел.</th>
+                            <th>Имя</th>
+                            <th>Фамилия</th>
+                            <th>Процент инвестора ДО</th>
+                            <th>Процент инвестора ПОСЛЕ</th>
+                            <th>Инвест счет ДО</th>
+                            <th>Начисление доходности</th>
+                            <th>Инвест счет ПОСЛЕ</th>
+                            <th>Реф. счет ДО</th>
+                            <th>Реф. счет ПОСЛЕ</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for phone, row in rows %}
+                            <tr>
+                                <td>
+                                    {{ phone }}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.name }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.surname }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.profitRate }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.profitRateNew }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.invest|round(2, 'floor') }} {{ constant('App\\Controller\\Admin\\ImportController::CURRENCY') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.investSum }} {{ constant('App\\Controller\\Admin\\ImportController::CURRENCY') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.investNew|round(2, 'floor') }} {{ constant('App\\Controller\\Admin\\ImportController::CURRENCY') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.referral|round(2, 'floor') }} {{ constant('App\\Controller\\Admin\\ImportController::CURRENCY') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if row.error %}
+                                        <span class="label label-danger">{{ constant('App\\Controller\\Admin\\ImportController::NOT_FOUND') }}</span>
+                                    {% else %}
+                                        {{ row.referralNew|round(2, 'floor') }} {{ constant('App\\Controller\\Admin\\ImportController::CURRENCY') }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

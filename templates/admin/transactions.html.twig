@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+{% block title %}Операции{% endblock %}
+{% block body %}
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Операции</h4>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="row">
+        <!-- Column -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table m-t-30 table-hover no-wrap contact-list footable" data-page-size="10">
+                        <thead>
+                        <tr>
+                            <th class="{% if pagination.isSorted('t.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'ID', 't.id') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('u.surname') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Открыта', 'u.surname') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('u.username') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Номер телефона', 'u.username') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('a.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Вид транзакции', 'a.id') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.createdAt') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Время', 't.createdAt') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.createdAt') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Дата', 't.createdAt') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('t.sum') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Сумма', 't.sum') }}
+                            </th>
+                            <th class="{% if pagination.isSorted('c.id') %}sorted{% endif %}">
+                                {{ knp_pagination_sortable(pagination, 'Валюта', 'c.id') }}
+                            </th>
+                            <th>Статус</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for transaction in pagination %}
+                            <tr>
+                                <td>{{ transaction.id }}</td>
+                                <td>{{ transaction.user.name }} {{ transaction.user.surname }}</td>
+                                <td>{{ transaction.user.username }}</td>
+                                <td>
+                                    {% if transaction.direction == 'in' %} Пополнение {% else %} Снятие {% endif %} -
+                                    {{ transaction.account.name }}
+                                </td>
+                                <td>{{ transaction.createdAt| date('H:i:s') }}</td>
+                                <td>{{ transaction.createdAt| date('d.m.Y') }}</td>
+                                <td>{{ transaction.sum }}</td>
+                                <td>{{ transaction.currency.name }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Выберите статус
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <form method="post">
+                                                <input type="hidden" name="id" value="{{ transaction.id }}">
+                                                <button class="dropdown-item" name="confirmed">Выполнено</button>
+                                                <button class="dropdown-item" name="declined">Отменено</button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="9">
+                                <div class="text-right">
+                                    {{ knp_pagination_render(pagination) }}
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+    </div>
+
+    <!-- Row -->
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}

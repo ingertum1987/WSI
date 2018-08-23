@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Контакты{% endblock %}
+{% block body %}
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Контакты</h4>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- Row -->
+    <div class="row">
+        <div class="col-lg-3 col-xlg-3 col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <img src="/assets/images/logo.png" alt="" class="m-b-20" width="100%">
+                    <h6>Адрес:  Москва, ул. Верейская 29с134, БЦ Верейская Плаза-3</h6>
+                    <h6>Email: {{ adminEmail }}</h6>
+                    <h6>Сайт: <a href="http://www.wsifund.io">http://www.wsifund.io</a></h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-xlg-9 col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    <h3 class="card-title">Отправить сообщение администрации</h3>
+                    <div class="form-group">
+                        {{ form_widget(form.subject, { 'attr': {'class': "form-control", 'placeholder': form.subject.vars.label} }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_widget(form.message, { 'attr': {'class': "form-control", 'placeholder': form.message.vars.label} }) }}
+                    </div>
+                    <h4>
+                        <i class="ti-link"></i> {{ form.file.vars.label }}
+                    </h4>
+                    <div class="fallback">
+                        {{ form_widget(form.file, { 'attr': {'class': "form-control"} }) }}
+                    </div>
+                    <button type="submit" class="btn btn-success m-t-20">
+                        <i class="fa fa-envelope-o"></i> Отправить
+                    </button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Row -->
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+{% endblock %}
+{% block page_scripts %}
+    {% if app.request.query.get('send') == 'success' %}
+        <script>
+            $(document).ready(function () {
+                swal({
+                    title: "Поздравляем",
+                    text: "Cообщение успешно отправлено"
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

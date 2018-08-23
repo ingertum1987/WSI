@@ -1,0 +1,7 @@
+cabinet_user_profile:
+    resource: App\Controller\Cabinet\User\ProfileController
+    prefix: /
+
+cabinet_user_profile_foto:
+    resource: App\Controller\Cabinet\User\Profile\FotoController
+    prefix: /foto

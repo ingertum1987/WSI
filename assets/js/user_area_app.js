@@ -1,0 +1,33 @@
+require('../../assets/css/style.scss');
+
+var $ = require('jquery');
+global.$ = global.jQuery = $;
+require('bootstrap');
+require('sticky-kit/dist/sticky-kit.min');
+require('footable');
+require('../../assets/js/dist/perfect-scrollbar.jquery.min');
+require('../../assets/js/dist/waves');
+require('../../assets/js/dist/sidebarmenu');
+require('jquery-sparkline');
+require('sweetalert');
+require('sweetalert2');
+require('jquery-autocomplete');
+require('../../assets/js/dist/custom');
+require('../../assets/js/dist/pages/footable-init');
+require('../../assets/js/dist/pages/jquery.sweet-alert.custom');
+require('bootstrap-wysiwyg');
+require('chartist/dist/chartist.min');
+require('../../assets/node_modules/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min');
+require('../../assets/node_modules/echarts/echarts-all');
+require('../../assets/node_modules/jsgrid/db');
+require('../../assets/node_modules/jsgrid/jsgrid');
+require('../../assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min');
+require('../../assets/node_modules/bootstrap-datepicker/locale/bootstrap-datepicker.ru');
+require('../../assets/js/dist/pages/jsgrid-init');
+require('../../assets/js/dist/pages/widget-charts');
+require('../../assets/js/dist/pages/chat');
+require('../../assets/slim/slim.kickstart.min.js');
+
+var routes = require('../../var/sources/fos_js_routes.json');
+global.Routing = require('../../public/bundles/fosjsrouting/js/router.min.js');
+Routing.setRoutingData(routes);

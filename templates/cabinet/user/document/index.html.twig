@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'page.user.document.index.title'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">{{ 'page.user.document.index.title'|trans }}</h4>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-md-7 align-self-center text-right">
+                <button class="btn waves-effect waves-light btn-rounded btn-info"
+                        data-toggle="modal" data-target="#addDocument-modal">{{ 'page.user.document.index.add'|trans }}</button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row el-element-overlay">
+        {% for document in documents %}
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="el-card-item">
+                        <div class="el-card-avatar el-overlay-1">
+                            <img src="{{ asset(document.img, 'docs') }}" alt="user" class="img-fluid">
+                            <div class="el-overlay">
+                                <ul class="el-info">
+                                    <li>
+                                        <a class="btn default btn-outline image-popup-vertical-fit" href="{{ asset(document.file, 'docs') }}" download="">
+                                            <i class="icon-link"></i>
+                                        </a>
+                                    </li>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <li>
+                                            <form method="post">
+                                                <input type="hidden" name="id" value="{{ document.id }}">
+                                                <button class="btn default btn-outline remove-doc" name="removeDoc"><i class="fa fa-times"></i></button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="el-card-content">
+                            <h3 class="box-title">{{ document.name }}</h3>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="addDocument-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'page.user.document.index.add_title'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                {{ form_start(form) }}
+                <div class="modal-body">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.img) }}
+                    {{ form_row(form.file) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">{{ 'form.cancel'|trans({}, 'form') }}</button>
+                    {{ form_row(form.save) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
